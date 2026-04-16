@@ -1,0 +1,7 @@
+{
+  "name": "Supernova Coffee Roasters",
+  "description": "A high-fidelity mobile-first application for a modern coffee shop featuring subscriptions, e-commerce, and a barista panel.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
