@@ -55,6 +55,7 @@ import { Html5QrcodeScanner } from 'html5-qrcode';
 import { createClient } from '@supabase/supabase-js';
 import { Product, User, CartItem, CoffeeConfig } from './types';
 import { COLORS, LOGOS, MOCK_PRODUCTS, SUBSCRIPTION_PLAN } from './constants';
+import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
 
 // --- Supabase Client ---
 const supabaseUrl = 'https://owpeosbyhcugwikjbahn.supabase.co';
