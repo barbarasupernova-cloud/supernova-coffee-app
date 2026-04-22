@@ -36,6 +36,7 @@ import {
   Truck,
   AlertCircle
 } from 'lucide-react';
+import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
 import { 
   BarChart, 
   Bar, 
@@ -55,12 +56,12 @@ import { Html5QrcodeScanner } from 'html5-qrcode';
 import { createClient } from '@supabase/supabase-js';
 import { Product, User, CartItem, CoffeeConfig } from './types';
 import { COLORS, LOGOS, MOCK_PRODUCTS, SUBSCRIPTION_PLAN } from './constants';
-import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
 
 // --- Supabase Client ---
 const supabaseUrl = 'https://owpeosbyhcugwikjbahn.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93cGVvc2J5aGN1Z3dpa2piYWhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMzAxNTcsImV4cCI6MjA5MDkwNjE1N30.9dNuhQXvNZDT-u_PRl5CEXBoB99FtteUR7K2vK4MWKo';
 const supabase = createClient(supabaseUrl, supabaseKey);
+initMercadoPago(import.meta.env.VITE_MP_PUBLIC_KEY);
 
 // --- Components ---
 
