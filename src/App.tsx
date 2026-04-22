@@ -58,9 +58,12 @@ import { Product, User, CartItem, CoffeeConfig } from './types';
 import { COLORS, LOGOS, MOCK_PRODUCTS, SUBSCRIPTION_PLAN } from './constants';
 
 // --- Supabase Client ---
-const supabaseUrl = 'https://owpeosbyhcugwikjbahn.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93cGVvc2J5aGN1Z3dpa2piYWhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMzAxNTcsImV4cCI6MjA5MDkwNjE1N30.9dNuhQXvNZDT-u_PRl5CEXBoB99FtteUR7K2vK4MWKo';
+// Use as variáveis de ambiente para segurança e para funcionar na Vercel
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Inicializa o Mercado Pago usando a sua chave pública que deve estar na Vercel
 initMercadoPago(import.meta.env.VITE_MP_PUBLIC_KEY);
 
 // --- Components ---
