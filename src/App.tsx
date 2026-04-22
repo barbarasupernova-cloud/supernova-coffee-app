@@ -499,123 +499,83 @@ const SignUpPage = ({ onSignUp }: any) => {
   );
 };
 
-const CheckoutPage = ({ cart, cartTotal, user, onPayment }: any) => {
+const CheckoutPage = ({ cart, cartTotal, user }: any) => {
   const navigate = useNavigate();
-  const [paymentMethod, setPaymentMethod] = useState<'pix' | 'card'>('pix');
+  const [preferenceId, setPreferenceId] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const finalTotal = cartTotal;
 
   const handlePayment = async () => {
     setIsProcessing(true);
     try {
-      await onPayment({
-        paymentMethod,
-        shippingFee: 0
+      const response = await fetch('https://owpeosbyhcugwikjbahn.supabase.co/functions/v1/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: cart.map((item: any) => ({
+            title: item.product.name,
+            unit_price: item.product.price,
+            quantity: item.quantity,
+          }))
+        }),
       });
+
+      const data = await response.json();
+      if (data.id) {
+        setPreferenceId(data.id);
+      } else {
+        throw new Error("ID de preferência não retornado");
+      }
+    } catch (error) {
+      console.error("Erro no checkout:", error);
+      alert("Erro ao gerar pagamento. Verifique sua conexão.");
     } finally {
       setIsProcessing(false);
     }
   };
 
   return (
-    <motion.div 
-      initial={{ x: '100%' }}
-      animate={{ x: 0 }}
-      exit={{ x: '-100%' }}
-      className="w-full min-h-screen bg-black text-white"
-    >
-      <div className="max-w-[1200px] mx-auto p-6 flex flex-col min-h-screen">
-        <header className="flex items-center gap-4 mb-8 max-w-md mx-auto w-full">
-          <button onClick={() => navigate('/')} className="p-2 -ml-2 hover:bg-zinc-800 rounded-full transition-colors text-white">
+    <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} className="w-full min-h-screen bg-black text-white p-6">
+      <div className="max-w-md mx-auto space-y-8">
+        <header className="flex items-center gap-4">
+          <button onClick={() => navigate('/')} className="p-2 hover:bg-zinc-800 rounded-full text-white">
             <ChevronLeft size={24} />
           </button>
-          <h1 className="text-2xl font-bold tracking-tighter text-white">Finalizar Pedido</h1>
+          <h1 className="text-2xl font-bold tracking-tighter">Finalizar Pedido</h1>
         </header>
 
-        <div className="flex-1 space-y-8 overflow-y-auto pb-24 max-w-md mx-auto w-full">
-        <section className="space-y-4">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-gray-500">Resumo do Pedido</h2>
-          <div className="bg-zinc-900 rounded-2xl p-4 space-y-3 border border-white/5">
-            {cart.map((item: CartItem) => (
-              <div key={item.product.id} className="flex justify-between items-start">
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium text-white"><span className="font-bold">{item.quantity}x</span> {item.product.name}</span>
-                  {item.config && (
-                    <span className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">
-                      {item.config.type === 'grain' ? 'Em Grãos' : `Moído - ${item.config.grind}`}
-                    </span>
-                  )}
-                </div>
-                <span className="font-bold text-white">R$ {(item.product.price * item.quantity).toFixed(2)}</span>
-              </div>
-            ))}
-            <div className="pt-3 border-t border-white/5 space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="font-bold text-lg text-white">Total</span>
-                <span className="font-bold text-2xl text-white">R$ {finalTotal.toFixed(2)}</span>
-              </div>
+        <section className="bg-zinc-900 rounded-[24px] p-6 border border-white/5 space-y-4">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-gray-500">Resumo do Carrinho</h2>
+          {cart.map((item: any) => (
+            <div key={item.product.id} className="flex justify-between text-sm">
+              <span>{item.quantity}x {item.product.name}</span>
+              <span className="font-bold">R$ {(item.product.price * item.quantity).toFixed(2)}</span>
             </div>
+          ))}
+          <div className="pt-4 border-t border-white/10 flex justify-between items-center">
+            <span className="font-bold text-lg">Total</span>
+            <span className="font-bold text-2xl text-[#E53E3E]">R$ {cartTotal.toFixed(2)}</span>
           </div>
         </section>
 
-        <section className="space-y-4">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-gray-500">Pagamento</h2>
-          <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-4">
+          {!preferenceId ? (
             <button 
-              onClick={() => setPaymentMethod('pix')}
-              className={`p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 ${paymentMethod === 'pix' ? 'border-[#E53E3E] bg-[#E53E3E]/10 text-white' : 'border-white/5 text-gray-500'}`}
+              onClick={handlePayment}
+              disabled={isProcessing}
+              className="w-full py-5 bg-[#E53E3E] text-white font-bold rounded-2xl shadow-xl shadow-red-500/20 disabled:opacity-50 flex items-center justify-center gap-2"
             >
-              <Smartphone size={24} />
-              <span className="text-xs font-bold">PIX</span>
+              {isProcessing ? <RefreshCw className="animate-spin" size={20} /> : 'Confirmar e Pagar'}
             </button>
-            <button 
-              onClick={() => setPaymentMethod('card')}
-              className={`p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 ${paymentMethod === 'card' ? 'border-[#E53E3E] bg-[#E53E3E]/10 text-white' : 'border-white/5 text-gray-500'}`}
-            >
-              <CreditCard size={24} />
-              <span className="text-xs font-bold">CARTÃO</span>
-            </button>
-          </div>
-
-          {paymentMethod === 'pix' ? (
-            <div className="bg-zinc-900 p-6 rounded-2xl text-center space-y-4 border border-white/5">
-              <div className="w-32 h-32 bg-white mx-auto rounded-xl flex items-center justify-center border border-white/5">
-                <QrCode size={80} className="text-gray-200" />
-              </div>
-              <button className="text-xs font-bold uppercase tracking-widest underline text-white">Copiar Código Pix</button>
-            </div>
           ) : (
-            <div className="space-y-3">
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center mb-2">Pagamento Recorrente Ativado</p>
-              <input type="text" placeholder="Número do Cartão" className="w-full p-4 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-black transition-all" />
-              <input type="text" placeholder="Nome no Cartão" className="w-full p-4 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-black transition-all" />
-              <div className="grid grid-cols-2 gap-3">
-                <input type="text" placeholder="Validade" className="w-full p-4 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-black transition-all" />
-                <input type="text" placeholder="CVV" className="w-full p-4 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-black transition-all" />
-              </div>
+            <div className="bg-white rounded-2xl p-2 overflow-hidden">
+               <Wallet initialization={{ preferenceId: preferenceId }} customization={{ texts: { valueProp: 'smart_option' } }} />
             </div>
           )}
-        </section>
-      </div>
-
-      <div className="fixed bottom-0 left-0 right-0 p-6 bg-black border-t border-white/5">
-        <div className="max-w-md mx-auto">
-          <button 
-            onClick={handlePayment}
-            disabled={isProcessing}
-            className={`w-full py-5 text-white font-bold rounded-2xl shadow-xl transition-all flex items-center justify-center gap-3 ${isProcessing ? 'bg-zinc-800 cursor-not-allowed' : 'bg-[#E53E3E] shadow-red-500/20 hover:scale-[1.02] active:scale-[0.98]'}`}
-          >
-            {isProcessing ? (
-              <>
-                <RefreshCw className="animate-spin" size={20} />
-                Processando...
-              </>
-            ) : (
-              'Confirmar e Pagar'
-            )}
-          </button>
         </div>
-      </div>
+        
+        <p className="text-[10px] text-center text-gray-500 uppercase tracking-widest">
+          Pagamento processado com segurança pelo Mercado Pago
+        </p>
       </div>
     </motion.div>
   );
