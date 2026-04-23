@@ -71,27 +71,55 @@ initMercadoPago(import.meta.env.VITE_MP_PUBLIC_KEY);
 const Header = ({ user }: { user: User | null }) => {
   const navigate = useNavigate();
   return (
-    <header className="relative w-full backdrop-blur-md z-10 bg-black/80 flex flex-col">
-      <Link to="/" className="block w-full">
+    // Aplicamos a cor exata da sua logo (#D52927) como fundo do header
+    <header className="relative w-full z-10 bg-[#D52927] flex flex-col items-center">
+      {/* Container que limita a largura da logo no PC */}
+      <Link to="/" className="w-full max-w-[1200px] flex justify-center">
         <img 
-          src={LOGOS.HORIZONTAL} 
-          alt="Supernova" 
-          className="w-full h-auto object-cover transition-all" 
+          src="https://i.imgur.com/wzPfJj0.jpeg" 
+          alt="Supernova Coffee" 
+          // h-auto e max-h impedem que a logo cresça demais no desktop
+          // object-contain garante que ela não estique
+          className="w-full h-auto max-h-[160px] md:max-h-[220px] object-contain transition-all" 
           referrerPolicy="no-referrer" 
         />
       </Link>
-      <div className="flex justify-end p-2 border-t border-white/10">
-        <button 
-          onClick={() => navigate(user ? '/cliente' : '/cadastro')} 
-          className="p-1.5 hover:bg-white/10 rounded-full transition-colors text-white flex items-center gap-2"
-        >
-          <span className="text-[10px] font-bold uppercase tracking-widest">{user ? 'Minha Conta' : 'Entrar'}</span>
-          <UserIcon size={18} />
-        </button>
+      
+      {/* Barra de utilitários - mantemos um leve fundo escuro para leitura do texto */}
+      <div className="w-full flex justify-center bg-black/10 backdrop-blur-sm border-t border-white/10">
+        <div className="w-full max-w-[1200px] flex justify-end p-2 px-6">
+          <button 
+            onClick={() => navigate(user ? '/cliente' : '/cadastro')} 
+            className="p-1.5 hover:bg-white/10 rounded-full transition-colors text-white flex items-center gap-2"
+          >
+            <span className="text-[10px] font-bold uppercase tracking-widest">
+              {user ? 'Minha Conta' : 'Entrar'}
+            </span>
+            <UserIcon size={18} />
+          </button>
+        </div>
       </div>
     </header>
   );
 };
+
+const HomePage = ({ user }: any) => {
+  const navigate = useNavigate();
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="w-full min-h-screen bg-black text-white"
+    >
+      {/* O Header fica fora do container max-w para o fundo colorido ocupar a tela toda */}
+      <Header user={user} />
+
+      {/* Este container garante que o conteúdo do site não "esparrame" no PC */}
+      <div className="max-w-[1200px] mx-auto">
+        <main className="px-6 py-12 space-y-12">
+          {/* O restante do seu código da Home continua aqui... */}
 
 const CoffeeConfigModal = ({ product, onConfirm, onClose }: { product: Product, onConfirm: (config: CoffeeConfig) => void, onClose: () => void }) => {
   const [type, setType] = useState<'grain' | 'ground'>('grain');
