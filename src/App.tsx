@@ -104,27 +104,13 @@ const Header = ({ user }: { user: User | null }) => {
   );
 };
 
-const HomePage = ({ user }: any) => {
-  const navigate = useNavigate();
+interface CoffeeConfigModalProps {
+  product: Product;
+  onConfirm: (config: CoffeeConfig) => void;
+  onClose: () => void;
+}
 
-  return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="w-full min-h-screen bg-black text-white"
-    >
-      {/* O Header fica fora do container max-w para o fundo colorido ocupar a tela toda */}
-      <Header user={user} />
-
-      {/* Este container garante que o conteúdo do site não "esparrame" no PC */}
-      <div className="max-w-[1200px] mx-auto">
-        <main className="px-6 py-12 space-y-12">
-          {/* O restante do seu código da Home continua aqui... */}
-
-const CoffeeConfigModal = ({ product, onConfirm, onClose }: { product: Product, onConfirm: (config: CoffeeConfig) => void, onClose: () => void }) => {
-  const [type, setType] = useState<'grain' | 'ground'>('grain');
-  const [grind, setGrind] = useState<'fine' | 'medium' | 'coarse'>('medium');
+const CoffeeConfigModal = ({ product, onConfirm, onClose }: CoffeeConfigModalProps) => {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
