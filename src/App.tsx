@@ -111,6 +111,8 @@ interface CoffeeConfigModalProps {
 }
 
 const CoffeeConfigModal = ({ product, onConfirm, onClose }: CoffeeConfigModalProps) => {
+  const [type, setType] = useState<'grain' | 'ground'>('grain');
+  const [grind, setGrind] = useState<'fine' | 'medium' | 'coarse'>('medium');
 
   return (
     <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
@@ -184,66 +186,72 @@ const HomePage = ({ user }: any) => {
   const navigate = useNavigate();
 
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="w-full min-h-screen bg-black text-white"
-    >
-      <div className="max-w-[1200px] mx-auto">
-        <Header user={user} />
+   <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <motion.div 
+        initial={{ y: '100%' }}
+        animate={{ y: 0 }}
+        className="w-full max-w-md bg-zinc-900 rounded-[32px] p-8 space-y-8 shadow-2xl border border-white/5"
+      >
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold tracking-tighter text-white">Configurar Café</h2>
+          <button onClick={onClose} className="p-2 bg-zinc-800 rounded-full text-white">
+            <ChevronLeft size={20} className="rotate-[-90deg]" />
+          </button>
+        </div>
 
-        <main className="px-6 py-12 space-y-12">
-          {/* Hero Section */}
-          <section className="relative overflow-hidden rounded-[40px] bg-zinc-900 text-white p-10 lg:p-20 shadow-2xl border border-white/5 min-h-[400px] flex items-center">
-            <div className="relative z-10 max-w-xl space-y-6">
-              <h2 className="text-5xl lg:text-7xl font-black tracking-tighter leading-none uppercase">
-                Energia <br />
-                <span className="text-[#E53E3E]">Ilimitada.</span>
-              </h2>
-              <p className="text-gray-400 text-lg lg:text-xl font-medium max-w-md">
-                Assine agora e beba café à vontade em nossa loja física. A revolução do consumo local chegou.
-              </p>
+        <div className="space-y-6">
+          <div className="space-y-3">
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-500">Tipo de Grão</p>
+            <div className="grid grid-cols-2 gap-3">
               <button 
-                onClick={() => navigate('/planos')}
-                className="px-10 py-5 bg-[#E53E3E] text-white font-black uppercase tracking-[0.2em] text-sm rounded-2xl hover:scale-[1.05] active:scale-[0.95] transition-all shadow-2xl shadow-red-500/40"
+                onClick={() => setType('grain')}
+                className={`py-4 rounded-2xl border-2 font-bold transition-all ${type === 'grain' ? 'border-[#E53E3E] bg-[#E53E3E]/10 text-white' : 'border-white/5 text-gray-500'}`}
               >
-                Assinar Agora
+                Em Grãos
+              </button>
+              <button 
+                onClick={() => setType('ground')}
+                className={`py-4 rounded-2xl border-2 font-bold transition-all ${type === 'ground' ? 'border-[#E53E3E] bg-[#E53E3E]/10 text-white' : 'border-white/5 text-gray-500'}`}
+              >
+                Moído
               </button>
             </div>
-            
-            <div className="absolute -right-20 -bottom-20 opacity-10 lg:opacity-20 rotate-12 pointer-events-none">
-              <Coffee size={600} strokeWidth={1} />
-            </div>
-          </section>
-
-          {/* Features Section */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="p-8 bg-zinc-900/50 rounded-[32px] border border-white/5 space-y-4">
-              <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-[#E53E3E]">
-                <Coffee size={24} />
-              </div>
-              <h3 className="text-xl font-bold uppercase tracking-tight">Café de Origem</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">Grãos selecionados das melhores regiões produtoras do Brasil.</p>
-            </div>
-            <div className="p-8 bg-zinc-900/50 rounded-[32px] border border-white/5 space-y-4">
-              <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-[#E53E3E]">
-                <Smartphone size={24} />
-              </div>
-              <h3 className="text-xl font-bold uppercase tracking-tight">Check-in Digital</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">Identificação rápida via QR Code diretamente no balcão.</p>
-            </div>
-            <div className="p-8 bg-zinc-900/50 rounded-[32px] border border-white/5 space-y-4">
-              <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-[#E53E3E]">
-                <Users size={24} />
-              </div>
-              <h3 className="text-xl font-bold uppercase tracking-tight">Comunidade</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">Faça parte de um ecossistema de apaixonados por café.</p>
-            </div>
           </div>
-        </main>
-      </div>
-    </motion.div>
+
+          {type === 'ground' && (
+            <motion.div 
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              className="space-y-3"
+            >
+              <p className="text-xs font-bold uppercase tracking-widest text-gray-500">Moagem</p>
+              <div className="grid grid-cols-1 gap-2">
+                {[
+                  { id: 'fine', label: 'Fina (Espresso)' },
+                  { id: 'medium', label: 'Média (Filtro/Hario V60)' },
+                  { id: 'coarse', label: 'Grossa (Prensa Francesa)' }
+                ].map((opt) => (
+                  <button 
+                    key={opt.id}
+                    onClick={() => setGrind(opt.id as any)}
+                    className={`p-4 rounded-xl border-2 text-left font-bold transition-all ${grind === opt.id ? 'border-[#E53E3E] bg-[#E53E3E]/10 text-white' : 'border-white/5 text-gray-500'}`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </div>
+
+        <button 
+          onClick={() => onConfirm({ type, grind: type === 'ground' ? grind : undefined })}
+          className="w-full py-5 bg-[#E53E3E] text-white font-bold rounded-2xl shadow-xl shadow-red-500/20"
+        >
+          Adicionar ao Carrinho
+        </button>
+      </motion.div>
+    </div>
   );
 };
 
@@ -768,7 +776,7 @@ const PlanosPage = ({ user, setCart }: any) => {
                   <span className="text-gray-500 text-xs font-black uppercase tracking-[0.2em]">/mês</span>
                 </div>
 
-                <div className="space-y-6 py-6 border-t border-white/5 flex-1">
+               <div className="space-y-6 py-6 border-t border-white/5 flex-1">
                   <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#E53E3E]">O que está incluso:</p>
                   <ul className="space-y-4">
                     {plano.itens && plano.itens.length > 0 ? (
@@ -778,24 +786,21 @@ const PlanosPage = ({ user, setCart }: any) => {
                             <CheckCircle2 size={16} className="text-green-500" />
                           </div>
                           <div className="flex flex-col">
-                            <span className="font-bold text-white tracking-tight">{item.nome}</span>
-                            {item.descricao && (
-                              <span className="text-[11px] text-gray-500 leading-tight mt-1">{item.descricao}</span>
-                            )}
+                            <span className="font-bold text-white">{item.nome}</span>
                           </div>
                         </li>
                       ))
                     ) : (
-                      <li className="text-xs italic text-gray-500">Consulte os benefícios no balcão.</li>
+                      <li className="text-sm text-gray-500 italic">Consulte detalhes na loja</li>
                     )}
                   </ul>
                 </div>
 
                 <button 
                   onClick={() => handleSelectPlan(plano)}
-                  className="w-full py-5 bg-white text-black font-black uppercase tracking-[0.2em] text-xs rounded-2xl hover:bg-[#E53E3E] hover:text-white transition-all shadow-xl shadow-black/20"
+                  className="w-full py-4 bg-white/5 hover:bg-[#E53E3E] text-white font-bold rounded-2xl transition-all border border-white/10 hover:border-[#E53E3E] hover:shadow-xl hover:shadow-red-500/20"
                 >
-                  Assinar Agora
+                  Selecionar Plano
                 </button>
               </div>
             ))}
@@ -803,7 +808,8 @@ const PlanosPage = ({ user, setCart }: any) => {
         )}
       </div>
     </div>
-);
+  );
+};
 };
 
 const ClientAreaPage = ({ user, setUser, onLogout }: any) => {
