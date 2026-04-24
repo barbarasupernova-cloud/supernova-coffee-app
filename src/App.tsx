@@ -810,7 +810,6 @@ const PlanosPage = ({ user, setCart }: any) => {
     </div>
   );
 };
-};
 
 const ClientAreaPage = ({ user, setUser, onLogout }: any) => {
   const navigate = useNavigate();
