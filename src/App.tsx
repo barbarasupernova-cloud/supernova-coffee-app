@@ -182,7 +182,7 @@ const CoffeeConfigModal = ({ product, onConfirm, onClose }: CoffeeConfigModalPro
   );
 };
 
-const HomePage = ({ user }: any) => {
+const HomePage = ({ user, onClose }: any) => {
   const navigate = useNavigate();
 
   return (
