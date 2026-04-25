@@ -812,42 +812,81 @@ const PlanosPage = ({ user, setCart }: any) => {
 };
 
 export default function App() {
-  const [user, setUser] = useState<User | null>(null);
+ const [user, setUser] = useState<User | null>(null);
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
-  // Lógica para monitorar o login do usuário no Supabase
+  // 1. Monitorar se o usuário está logado ou não
   useEffect(() => {
+    // Checa sessão atual ao abrir
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
+      setUser(session?.user ? (session.user as any) : null);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+    // Escuta mudanças (Login/Logout)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        setUser(session.user as any);
+        // Se for a Bárbara fazendo login agora, manda para o balcão
+        if (event === 'SIGNED_IN' && session.user.email === 'barbara.supernova@gmail.com') {
+          window.location.href = '/balcao';
+        }
+      } else {
+        setUser(null);
+      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
+  const cartTotal = cart.reduce((acc, item) => acc + (item.product.price * (item.quantity || 1)), 0);
+
   return (
     <BrowserRouter>
-      {/* O Header fica fora das Routes para aparecer em todas as páginas */}
-      <Header user={user} />
-      
-      <AnimatePresence mode="wait">
-        <Routes>
-          {/* O caminho "/" carrega sua página de planos */}
-          <Route path="/" element={<PlanosPage user={user} setCart={setCart} />} />
-          
-          {/* O caminho "/cadastro" carrega sua SignUpPage */}
-          <Route path="/cadastro" element={<SignUpPage onSignUp={async (e, data) => { /* sua logica */ }} />} />
-          
-          {/* Checkout */}
-          <Route path="/checkout" element={<CheckoutPage cart={cart} cartTotal={0} user={user} />} />
-          
-          {/* Sucesso */}
-          <Route path="/sucesso" element={<SuccessPage />} />
-        </Routes>
-      </AnimatePresence>
+      <div className="min-h-screen bg-black text-white font-sans">
+        {/* O Header aparece em todas as páginas automaticamente */}
+        <Header user={user} />
+        
+        <AnimatePresence mode="wait">
+          <Routes>
+            {/* Página Inicial (Planos) */}
+            <Route path="/" element={<PlanosPage user={user} setCart={setCart} />} />
+            
+            {/* Login e Cadastro */}
+            <Route path="/cadastro" element={<SignUpPage onSignUp={async () => {}} />} />
+            
+            {/* Checkout e Carrinho */}
+            <Route path="/checkout" element={<CheckoutPage cart={cart} cartTotal={cartTotal} user={user} />} />
+            
+            {/* Sucesso após compra */}
+            <Route path="/sucesso" element={<SuccessPage />} />
+            
+            {/* Área Logada do Cliente */}
+            <Route path="/cliente" element={
+              user ? <div className="p-10 text-center"><h1>Bem-vindo, {user.email}</h1><p>Sua área de cliente está sendo preparada.</p></div> : <SignUpPage onSignUp={async () => {}} />
+            } />
+
+            {/* Painel Exclusivo da Bárbara */}
+            <Route path="/balcao" element={
+              user?.email === 'barbara.supernova@gmail.com' ? 
+              <div className="p-10 text-center text-[#D52927]"><h1>Painel de Controle - Supernova</h1><p>Bem-vinda, Bárbara.</p></div> : 
+              <div className="p-10 text-center">Acesso negado.</div>
+            } />
+          </Routes>
+        </AnimatePresence>
+
+        {/* Sistema de Notificação (Toast) */}
+        <AnimatePresence>
+          {notification && (
+            <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 50 }} className="fixed bottom-6 left-6 right-6 z-[100] max-w-md mx-auto">
+              <div className={`${notification.type === 'error' ? 'bg-red-600' : 'bg-green-600'} text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3`}>
+                <AlertCircle size={20} />
+                <span className="font-bold">{notification.message}</span>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </BrowserRouter>
   );
 }
