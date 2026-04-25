@@ -811,6 +811,47 @@ const PlanosPage = ({ user, setCart }: any) => {
   );
 };
 
+export default function App() {
+  const [user, setUser] = useState<User | null>(null);
+  const [cart, setCart] = useState<CartItem[]>([]);
+
+  // Lógica para monitorar o login do usuário no Supabase
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  return (
+    <BrowserRouter>
+      {/* O Header fica fora das Routes para aparecer em todas as páginas */}
+      <Header user={user} />
+      
+      <AnimatePresence mode="wait">
+        <Routes>
+          {/* O caminho "/" carrega sua página de planos */}
+          <Route path="/" element={<PlanosPage user={user} setCart={setCart} />} />
+          
+          {/* O caminho "/cadastro" carrega sua SignUpPage */}
+          <Route path="/cadastro" element={<SignUpPage onSignUp={async (e, data) => { /* sua logica */ }} />} />
+          
+          {/* Checkout */}
+          <Route path="/checkout" element={<CheckoutPage cart={cart} cartTotal={0} user={user} />} />
+          
+          {/* Sucesso */}
+          <Route path="/sucesso" element={<SuccessPage />} />
+        </Routes>
+      </AnimatePresence>
+    </BrowserRouter>
+  );
+}
+
 const ClientAreaPage = ({ user, setUser, onLogout }: any) => {
   const navigate = useNavigate();
   const [supabaseUser, setSupabaseUser] = useState<any>(null);
