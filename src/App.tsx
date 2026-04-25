@@ -114,79 +114,8 @@ const CoffeeConfigModal = ({ product, onConfirm, onClose }: CoffeeConfigModalPro
   const [type, setType] = useState<'grain' | 'ground'>('grain');
   const [grind, setGrind] = useState<'fine' | 'medium' | 'coarse'>('medium');
 
-  return (
+ return (
     <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <motion.div 
-        initial={{ y: '100%' }}
-        animate={{ y: 0 }}
-        className="w-full max-w-md bg-zinc-900 rounded-[32px] p-8 space-y-8 shadow-2xl border border-white/5"
-      >
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold tracking-tighter text-white">Configurar Café</h2>
-          <button onClick={onClose} className="p-2 bg-zinc-800 rounded-full text-white"><ChevronLeft size={20} className="rotate-[-90deg]" /></button>
-        </div>
-
-        <div className="space-y-6">
-          <div className="space-y-3">
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-500">Tipo de Grão</p>
-            <div className="grid grid-cols-2 gap-3">
-              <button 
-                onClick={() => setType('grain')}
-                className={`py-4 rounded-2xl border-2 font-bold transition-all ${type === 'grain' ? 'border-[#E53E3E] bg-[#E53E3E]/10 text-white' : 'border-white/5 text-gray-500'}`}
-              >
-                Em Grãos
-              </button>
-              <button 
-                onClick={() => setType('ground')}
-                className={`py-4 rounded-2xl border-2 font-bold transition-all ${type === 'ground' ? 'border-[#E53E3E] bg-[#E53E3E]/10 text-white' : 'border-white/5 text-gray-500'}`}
-              >
-                Moído
-              </button>
-            </div>
-          </div>
-
-          {type === 'ground' && (
-            <motion.div 
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              className="space-y-3"
-            >
-              <p className="text-xs font-bold uppercase tracking-widest text-gray-500">Moagem</p>
-              <div className="grid grid-cols-1 gap-2">
-                {[
-                  { id: 'fine', label: 'Fina (Espresso)' },
-                  { id: 'medium', label: 'Média (Filtro/Hario V60)' },
-                  { id: 'coarse', label: 'Grossa (Prensa Francesa)' }
-                ].map((opt) => (
-                  <button 
-                    key={opt.id}
-                    onClick={() => setGrind(opt.id as any)}
-                    className={`p-4 rounded-xl border-2 text-left font-bold transition-all ${grind === opt.id ? 'border-[#E53E3E] bg-[#E53E3E]/10 text-white' : 'border-white/5 text-gray-500'}`}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </div>
-
-        <button 
-          onClick={() => onConfirm({ type, grind: type === 'ground' ? grind : undefined })}
-          className="w-full py-5 bg-[#E53E3E] text-white font-bold rounded-2xl shadow-xl shadow-red-500/20"
-        >
-          Adicionar ao Carrinho
-        </button>
-      </motion.div>
-    </div>
-  );
-};
-
-const HomePage = ({ user, onClose }: any) => {
-  const navigate = useNavigate();
-
-  return (
-   <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <motion.div 
         initial={{ y: '100%' }}
         animate={{ y: 0 }}
