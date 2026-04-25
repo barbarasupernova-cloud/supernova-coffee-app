@@ -812,7 +812,7 @@ const PlanosPage = ({ user, setCart }: any) => {
 };
 
 export default function App() {
- const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
