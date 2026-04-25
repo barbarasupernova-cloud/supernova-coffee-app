@@ -2940,7 +2940,10 @@ const BaristaRouteWrapper = ({ notification, setNotification }: any) => {
 {/* Painel Exclusivo da Bárbara */}
             <Route path="/balcao" element={
               user?.email === 'barbara.supernova@gmail.com' ? (
-                <div className="p-10 text-center"><h1>Painel do Balcão</h1><p>Em breve: Leitor de QR Code</p></div>
+                <div className="p-10 text-center">
+                  <h1 className="text-2xl font-bold mb-4">Painel do Balcão</h1>
+                  <p className="text-gray-400">Sistema Supernova pronto para pedidos.</p>
+                </div>
               ) : (
                 <div className="p-10 text-center flex flex-col items-center gap-4">
                   <AlertCircle size={48} className="text-[#E53E3E]" />
@@ -2953,14 +2956,14 @@ const BaristaRouteWrapper = ({ notification, setNotification }: any) => {
           </Routes>
         </AnimatePresence>
 
-        {/* Sistema de Notificação Simples */}
+        {/* Sistema de Notificação */}
         <AnimatePresence>
           {notification && (
             <motion.div 
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 50 }}
-              className={`fixed bottom-6 left-6 right-6 p-4 rounded-2xl z-[200] flex items-center gap-3 font-bold shadow-2xl ${
+              className={`fixed bottom-6 left-6 right-6 p-4 rounded-2xl z-[200] flex items-center gap-3 font-bold shadow-2xl text-white ${
                 notification.type === 'success' ? 'bg-green-600' : 'bg-red-600'
               }`}
             >
