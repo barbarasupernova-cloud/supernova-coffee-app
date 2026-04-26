@@ -763,42 +763,48 @@ const [user, setUser] = useState<any>(null);
   const cartTotal = cart.reduce((acc, item) => acc + (item.product.price * (item.quantity || 1)), 0);
 
   return (
-    <BrowserRouter>
+  <BrowserRouter>
       <div className="min-h-screen bg-black text-white font-sans">
         <Header user={user} />
         
         <AnimatePresence mode="wait">
           <Routes>
+            {/* Página Inicial */}
             <Route path="/" element={<PlanosPage user={user} setCart={setCart} />} />
-            <Route path="/cadastro" element={<SignUpPage onSignUp={() => {}} />} />
+            
+            {/* Auth */}
+            <Route path="/cadastro" element={<SignUpPage onSignUp={async () => {}} />} />
+            
+            {/* Checkout */}
             <Route path="/checkout" element={<CheckoutPage cart={cart} cartTotal={cartTotal} user={user} />} />
             <Route path="/sucesso" element={<SuccessPage />} />
+            
+            {/* Áreas Privadas */}
             <Route path="/cliente" element={
               user ? (
                 <div className="p-10 text-center">
                   <h1 className="text-2xl font-bold">Bem-vindo, {user.email}</h1>
-                  <p className="text-gray-400">Sua área de cliente está sendo preparada.</p>
                 </div>
-              ) : <SignUpPage onSignUp={() => {}} />
+              ) : <SignUpPage onSignUp={async () => {}} />
             } />
 
             <Route path="/balcao" element={
               user?.email === 'barbara.supernova@gmail.com' ? (
                 <div className="p-10 text-center">
-                  <h1 className="text-2xl font-bold mb-4">Painel do Balcão</h1>
-                  <p>Em breve: Leitor de QR Code para validar assinaturas.</p>
+                  <h1 className="text-2xl font-bold">Painel do Balcão</h1>
                 </div>
               ) : (
                 <div className="p-10 text-center flex flex-col items-center gap-4">
                   <AlertCircle size={48} className="text-[#E53E3E]" />
                   <h1 className="text-xl font-bold">Acesso Restrito</h1>
-                  <Link to="/" className="text-[#E53E3E] font-bold underline">Voltar para Início</Link>
+                  <Link to="/" className="text-[#E53E3E] font-bold underline">Voltar</Link>
                 </div>
               )
             } />
           </Routes>
         </AnimatePresence>
 
+        {/* Notificações */}
         <AnimatePresence>
           {notification && (
             <motion.div 
