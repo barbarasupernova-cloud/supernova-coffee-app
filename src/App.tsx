@@ -2975,4 +2975,3 @@ const BaristaRouteWrapper = ({ notification, setNotification }: any) => {
       </div>
     </BrowserRouter>
   );
-}
